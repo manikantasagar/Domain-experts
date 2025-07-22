@@ -1,8 +1,23 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DomainSidebar from './DomainSidebar';
 import { Link } from 'react-router-dom';
 
 function ProfBox({ coaches }) {
+
+  // let token = localStorage.getItem('token');
+  let[token,setToken]=useState(localStorage.getItem('token'));
+  useEffect(() => {
+  const interval = setInterval(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+      clearInterval(interval); // ✅ stop interval once token is found
+    }
+  }, 1000); // check every 500ms (or as needed)
+
+  return () => clearInterval(interval); // cleanup if component unmounts
+}, []);
+
     const [search, setSearch] = useState('');
     const [selectedDomain, setSelectedDomain] = useState('All');
     const domains = ['All', ...Array.from(new Set(coaches.map(c => c.domain)))];
@@ -27,8 +42,15 @@ function ProfBox({ coaches }) {
           onChange={e => setSearch(e.target.value)}
           className="search-input"
             />
+            <div id='log-sign-buttons'>
+              {!token && <Link to='/signup'><button id="signbut">signup</button></Link>}
+              {!token && <Link to='/login'><button id="logbut">login</button></Link>}
+              {token && <Link to='/profile'><button >Profile</button></Link>}
+            
+            
+            </div>
       </header>
-        <Link to="/chat" className="chat-link">Chat</Link>
+        {/* <Link to="/chat" className="chat-link">Chat</Link> */}
       <div className="app-body">
         {/* Sidebar */}
         <DomainSidebar domains={domains} selectedDomain={selectedDomain} setSelectedDomain={setSelectedDomain} />
@@ -42,7 +64,7 @@ function ProfBox({ coaches }) {
               {filteredCoaches.map(coach => (
                 <div key={coach.id} className="coach-card">
                   <h4>{coach.name}</h4>
-                  <Link to={{ pathname: "/profile", state: {coach } }}>
+                  <Link to= "/profile"  state={{coach }} >
                     {/* {console.log(coach)} */}
                     <img src={`http://localhost:8000/${coach.image}`} alt={coach.name} />
                   </Link>

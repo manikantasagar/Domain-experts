@@ -7,6 +7,8 @@ import { BrowserRouter } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom'; 
 import Chat from './Chat'; // Importing the Chat component
 import Profile from './Profile'; // Importing the Profile component
+import Signup from './Signup'
+import Login from './Login'; // Importing the Login component
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -18,6 +20,10 @@ root.render(
         <Route path="/" element={<App />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        
+        
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

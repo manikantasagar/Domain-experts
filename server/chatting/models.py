@@ -1,44 +1,20 @@
-from django.db import models
-import os
-from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
-
-
-
-
-
-# Create your models here.
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = f'chat_{self.room_name}'
-
-        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        pass  # No group to discard
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        message = data['message']
+        message = data.get('message', '')
         username = data.get('username', 'Anonymous')
 
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'chat_message',
-                'message': message,
-                'username': username,
-            }
-        )
-
-    async def chat_message(self, event):
+        # Just echo the message back to the same socket
         await self.send(text_data=json.dumps({
-            'message': event['message'],
-            'username': event['username'],
+            'message': message,
+            'username': username,
         }))

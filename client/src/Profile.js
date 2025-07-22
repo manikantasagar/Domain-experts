@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import './App.css';
 import Chat from './Chat';
+import { Link } from 'react-router-dom';
 
 function Profile() {
   // const location = useLocation();
   const location = useLocation();
   const coach = location.state?.coach;
   const [showChat, setShowChat] = useState(false);
-  console.log(state)
+//   console.log(state)
 
   if (!coach) {
     return <div className="profile-container"><h2>No coach data provided.</h2></div>;
@@ -45,11 +46,9 @@ function Profile() {
       <button className="profile-message-btn" onClick={() => setShowChat(!showChat)}>
         {showChat ? 'Close Messenger' : 'Message Coach'}
       </button>
-      {showChat && (
-        <div className="profile-chat-box">
-          <Chat roomName={coach.name.replace(/\s+/g, '').toLowerCase()} />
-        </div>
-      )}
+      <Link to="/chat" state={{ roomName:coach.name.replace(/\s+/g, '').toLowerCase()  }}>
+        <button className="profile-chat-btn">   Chat with Coach</button>
+      </Link>
     </div>
   );
 }

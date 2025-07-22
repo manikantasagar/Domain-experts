@@ -1,41 +1,69 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 
-const Chat = ({ roomName: propRoomName }) => {
-  const params = useParams();
-  const roomName = propRoomName || (params.id ? `coach_${params.id}` : 'default');
-  const username = params.username ? decodeURIComponent(params.username) : 'Anonymous';
+const Chat = () => {
+  const location = useLocation();
+  const socketRef = useRef(null);
+  const messagesEndRef = useRef(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [socket, setSocket] = useState(null);
+
+  // Assume username is passed via Link state
+  const username = location.state?.username || "Anonymous";
+  const targetUser = location.state?.targetUser || "Other";
 
   useEffect(() => {
-    const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomName}/`);
-    setSocket(ws);
+    // Connect to WebSocket
+    const ws = new WebSocket(`ws://localhost:8000/ws/chat/`);
+    socketRef.current = ws;
 
-    ws.onmessage = (e) => {
-      const data = JSON.parse(e.data);
-      setMessages((prev) => [...prev, data.message]);
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setMessages((prev) => [...prev, data]);
     };
 
+    ws.onclose = () => console.log("WebSocket disconnected");
+
     return () => ws.close();
-  }, [roomName]);
+  }, []);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const sendMessage = () => {
-    if (socket && input.trim() !== "") {
-      socket.send(JSON.stringify({ message: input, username }));
+    if (socketRef.current && input.trim() !== "") {
+      socketRef.current.send(
+        JSON.stringify({
+          message: input,
+          username,
+          to: targetUser, // optional routing metadata
+        })
+      );
+      setMessages((prev) => [...prev, { message: input, username }]);
       setInput("");
     }
   };
 
   return (
-    <div>
+    <div style={{ padding: "1rem", border: "1px solid #ccc", borderRadius: "5px" }}>
       <h3>Chatting as: {username}</h3>
-      <div>
-        {messages.map((msg, idx) => <p key={idx}>{msg}</p>)}
+      <div style={{ maxHeight: "300px", overflowY: "auto", marginBottom: "1rem" }}>
+        {messages.map((msg, idx) => (
+          <p key={idx}>
+            <strong>{msg.username}:</strong> {msg.message}
+          </p>
+        ))}
+        <div ref={messagesEndRef} />
       </div>
-      <input value={input} onChange={e => setInput(e.target.value)} />
-      <button onClick={sendMessage}>Send</button>
+      <input
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        style={{ width: "70%", padding: "0.5rem" }}
+      />
+      <button onClick={sendMessage} style={{ padding: "0.5rem", marginLeft: "0.5rem" }}>
+        Send
+      </button>
     </div>
   );
 };

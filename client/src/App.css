@@ -12,16 +12,26 @@
 
 /* Header and Search Bar */
 .app-header {
+  display: flex;
   padding: 1rem;
   background: #282c34;
   color: white;
+  justify-content: space-between;
 }
 .search-input {
+  
   padding: 0.5rem;
   width: 300px;
   font-size: 1rem;
   border-radius: 4px;
   border: none;
+}
+#log-sign-buttons{
+
+  display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: space-around;
 }
 
 /* Body Layout */

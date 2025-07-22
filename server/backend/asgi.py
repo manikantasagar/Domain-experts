@@ -20,10 +20,10 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 
 # application1 = get_asgi_application()
 
-# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chatting.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 
 application = ProtocolTypeRouter({
-    'http': get_asgi_application(),  # 2️⃣ Standard HTTP requests
+    'http': get_asgi_application(),  
     'websocket': AuthMiddlewareStack(  # 3️⃣ WebSocket handler is defined here
         URLRouter(                    # 4️⃣ WebSocket URLs handled via routing
             chatting.urls .websocket_urlpatterns  # 5️⃣ WebSocket URL patterns come from here
