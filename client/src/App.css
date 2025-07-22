@@ -1,0 +1,168 @@
+/* App Container */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+.coaches-list   img{
+  width: 100px;
+  height: 100px;
+}
+
+/* Header and Search Bar */
+.app-header {
+  padding: 1rem;
+  background: #282c34;
+  color: white;
+}
+.search-input {
+  padding: 0.5rem;
+  width: 300px;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: none;
+}
+
+/* Body Layout */
+.app-body {
+  display: flex;
+  flex: 1;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 200px;
+  background: #f4f4f4;
+  padding: 1rem;
+  border-right: 1px solid #ddd;
+}
+.domain-list {
+  list-style: none;
+  padding: 0;
+}
+.domain-btn {
+  background: #fff;
+  color: #282c34;
+  border: 1px solid #282c34;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  margin: 0.25rem 0;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background 0.2s, color 0.2s;
+}
+.domain-btn.selected {
+  background: #282c34;
+  color: #fff;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+}
+.coaches-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.coach-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  min-width: 180px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.coach-card h4 {
+  margin: 0 0 0.5rem 0;
+}
+.coach-domain {
+  font-size: 0.9rem;
+  color: #888;
+}
+.coach-description {
+  font-size: 0.85rem;
+  color: #555;
+  margin-top: 0.5rem;
+}
+.coach-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+/* Profile Page */
+.profile-container {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  background: #fff;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.profile-details h2 {
+  margin: 0;
+}
+
+.profile-details p {
+  color: #888;
+  margin: 8px 0 0 0;
+}
+
+.profile-bio {
+  margin-bottom: 24px;
+}
+
+.profile-bio h4 {
+  margin-bottom: 8px;
+}
+
+.profile-bio p {
+  color: #444;
+}
+
+.profile-message-btn {
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  background: #0078d4;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: background 0.2s;
+}
+
+.profile-message-btn:hover {
+  background: #005fa3;
+}
+
+.profile-chat-box {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 16px;
+  background: #f9f9f9;
+}
