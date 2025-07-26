@@ -1,6 +1,11 @@
-from django.urls import re_path
-from . import models
+from django.urls import re_path, path
+from . import models, views
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 websocket_urlpatterns = [
-    re_path(r'ws/chat/(?P<room_name>\w+)/$', models.ChatConsumer.as_asgi()),
+ path("ws/chat/<str:other_user_email>/", models.ChatConsumer.as_asgi()),
+]
+
+urlpatterns = [
+    path('chat/users/', views.get_users, name='get_users'),
 ]

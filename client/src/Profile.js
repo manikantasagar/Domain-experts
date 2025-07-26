@@ -46,8 +46,8 @@ function Profile() {
       <button className="profile-message-btn" onClick={() => setShowChat(!showChat)}>
         {showChat ? 'Close Messenger' : 'Message Coach'}
       </button>
-      <Link to="/chat" state={{ roomName:coach.name.replace(/\s+/g, '').toLowerCase()  }}>
-        <button className="profile-chat-btn">   Chat with Coach</button>
+      <Link to="/chat" state={{ email: coach.email }}>
+        <button className="profile-chat-btn">Chat with Coach</button>
       </Link>
     </div>
   );

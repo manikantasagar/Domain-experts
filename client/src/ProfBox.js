@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import DomainSidebar from './DomainSidebar';
 import { Link } from 'react-router-dom';
 
+
 function ProfBox({ coaches }) {
 
-  // let token = localStorage.getItem('token');
-  let[token,setToken]=useState(localStorage.getItem('token'));
+  // let token = sessionStorage.getItem('token');
+  let[token,setToken]=useState(sessionStorage.getItem('token'));
   useEffect(() => {
   const interval = setInterval(() => {
-    const storedToken = localStorage.getItem("token");
+    const storedToken = sessionStorage.getItem('token');
     if (storedToken) {
       setToken(storedToken);
       clearInterval(interval); // ✅ stop interval once token is found
@@ -44,8 +45,8 @@ function ProfBox({ coaches }) {
             />
             <div id='log-sign-buttons'>
               {!token && <Link to='/signup'><button id="signbut">signup</button></Link>}
-              {!token && <Link to='/login'><button id="logbut">login</button></Link>}
-              {token && <Link to='/profile'><button >Profile</button></Link>}
+              {!token && <Link to='/logins'><button id="logbut">login</button></Link>}
+              {token && <Link to='/own-profile'><button >Profile</button></Link>}
             
             
             </div>

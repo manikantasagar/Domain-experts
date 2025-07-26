@@ -54,6 +54,7 @@ def login(request):
     try:
         data = json.loads(request.body)
         email = data.get('email')
+        # print("maniiiii")
         password = data.get('password')
         if not all([email, password]):
             return JsonResponse({'error': 'Email and password required.'}, status=400)
@@ -73,3 +74,54 @@ def login(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
+
+
+
+@csrf_exempt
+def ownProfile(request):
+    email = request.GET.get('email')
+    if not email:
+        return JsonResponse({'error': 'Email is required'}, status=400)
+    try:
+        coach = Coaches.objects.get(email=email)
+    except Coaches.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+
+    if request.method == 'GET':
+        data = {
+            'name': coach.name,
+            'email': coach.email,
+            'phone': coach.phone,
+            'address': coach.address,
+            'city': coach.city,
+            'state': coach.state,
+            'zip': coach.zip,
+            'country': coach.country,
+            'domain': coach.domain,
+            'experience': coach.experience,
+            'location': coach.location,
+            'price': coach.price,
+            'rating': coach.rating,
+            'reviews': coach.reviews,
+            'availability': coach.availability,
+            'availability_days': coach.availability_days,
+            'connections': coach.connections,
+            'followers': coach.followers,
+            'following': coach.following,
+            'description': coach.description,
+        }
+        return JsonResponse(data)
+    elif request.method == 'POST':
+        try:
+            body = json.loads(request.body)
+        except Exception:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        # Update fields if present in request
+        for field in ['name', 'phone', 'address', 'city', 'state', 'zip', 'country', 'domain', 'experience', 'location', 'price', 'rating', 'reviews', 'availability', 'availability_days', 'connections', 'followers', 'following', 'description']:
+            if field in body:
+                setattr(coach, field, body[field])
+        coach.save()
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+  

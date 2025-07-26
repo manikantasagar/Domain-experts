@@ -15,15 +15,19 @@ function Login() {
     e.preventDefault();
     setError('');
     setLoading(true);
+    console.log(form)
     try {
-      const response = await fetch('http://localhost:8000/home/login/', {
-        method: 'POST',
+      const response = await fetch('http://localhost:8000/home/logins/', {
+        method: 'POST',      
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
       });
       const data = await response.json();
+      console.log(data.token)
       if (response.ok && data.token) {
-        localStorage.setItem('jwt_token', data.token);
+        sessionStorage.setItem('token', data.token);
+        console.log(form.email)
+        sessionStorage.setItem('user-mail',form.email)
         alert('Login successful!');
         navigate('/');
       } else {
@@ -31,6 +35,7 @@ function Login() {
       }
     } catch (err) {
       setError('Server error.');
+      // console.log(err)
     }
     setLoading(false);
   };

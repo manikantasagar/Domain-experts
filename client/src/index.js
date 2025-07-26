@@ -9,6 +9,7 @@ import Chat from './Chat'; // Importing the Chat component
 import Profile from './Profile'; // Importing the Profile component
 import Signup from './Signup'
 import Login from './Login'; // Importing the Login component
+import { OwnProfile }  from './OwnProfile';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -21,8 +22,8 @@ root.render(
         <Route path="/chat" element={<Chat />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        
+        <Route path="/logins" element={<Login />} />
+        <Route path="/own-profile" element={<OwnProfile/>}/>
         
       </Routes>
     </BrowserRouter>
