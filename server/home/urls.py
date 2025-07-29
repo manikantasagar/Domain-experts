@@ -4,6 +4,7 @@ from django.urls import path
 from home import views
 from django.http import JsonResponse
 from django.contrib.auth.models import User
+# from django.conf.urls import include
 from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
@@ -12,6 +13,6 @@ urlpatterns = [
     path('signups/', views.signup, name='signup'),
     path('logins/',views.login,name='login'),
     path('own-profile', views.ownProfile, name='own_profile'),
-   
-]
+    path('admin/', admin.site.urls),
+] 
 

@@ -14,6 +14,7 @@ export const OwnProfile = () => {
                 const res = await fetch('http://localhost:8000/home/own-profile?email=' + email);
                 const json = await res.json();
                 setData(json);
+                console.log(json.image);
                 setForm(json);
             } catch (error) {
                 setMessage('Error fetching data');
@@ -109,7 +110,7 @@ export const OwnProfile = () => {
                         <div className="ownprofile-avatar">
                             {/* Profile image or initials */}
                             {data.image ? (
-                                <img src={data.image} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                <img src={`http://localhost:8000/${data.image}`}  alt="Profile" />
                             ) : (
                                 <span>{data.name ? data.name[0].toUpperCase() : '?'}</span>
                             )}
@@ -142,9 +143,9 @@ export const OwnProfile = () => {
                     ) : (
                         <div>
                             {Object.entries(fields).map(([key, label]) => (
-                                <div key={key} className="ownprofile-form-row" style={{ display: key === 'description' ? 'block' : 'flex', alignItems: 'center' }}>
-                                    <div className="ownprofile-form-label" style={{ color: '#636e72' }}>{label}:</div>
-                                    <div className={key === 'description' ? 'ownprofile-form-description' : ''} style={key === 'description' ? {} : { fontSize: 17, color: '#2d3436', marginLeft: 12, width: 320 }}>
+                                <div key={key} className={`ownprofile-form-row ${key === 'description' ? 'description-mode' : 'display-mode'}`}>
+                                    <div className={`ownprofile-form-label ${key !== 'description' ? 'display-mode' : ''}`}>{label}:</div>
+                                    <div className={key === 'description' ? 'ownprofile-form-description' : 'ownprofile-form-description display-mode'}>
                                         {key === 'availability' ? (data[key] ? 'Available' : 'Not Available') : data[key]}
                                     </div>
                                 </div>

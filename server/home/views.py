@@ -13,12 +13,39 @@ import jwt
 from django.conf import settings
 from django.contrib.auth.hashers import check_password
 
-admin.site.register(Coaches)   
+# admin.site.register(Coaches)   
 # Create your views here.
 def home(request):
-    coaches = Coaches.objects.all().values()
+    coaches = Coaches.objects.all()
+    coaches_data = []
+    for coach in coaches:
+        coach_data = {
+            'id': coach.id,
+            'name': coach.name,
+            'email': coach.email,
+            'phone': coach.phone,
+            'image': coach.image.url,
+            'address': coach.address,
+            'city': coach.city,
+            'state': coach.state,
+            'zip': coach.zip,
+            'country': coach.country,
+            'domain': coach.domain,
+            'experience': coach.experience,
+            'location': coach.location,
+            'price': coach.price,
+            'rating': coach.rating,
+            'reviews': coach.reviews,
+            'availability': coach.availability,
+            'availability_days': coach.availability_days,
+            'connections': coach.connections,
+            'followers': coach.followers,
+            'following': coach.following,
+            'description': coach.description,
+        }
+        coaches_data.append(coach_data)
 
-    return JsonResponse(list(coaches), safe=False)
+    return JsonResponse(coaches_data, safe=False)
 
 
 @csrf_exempt
@@ -78,10 +105,12 @@ def login(request):
 
 
 @csrf_exempt
+
 def ownProfile(request):
     email = request.GET.get('email')
     if not email:
         return JsonResponse({'error': 'Email is required'}, status=400)
+
     try:
         coach = Coaches.objects.get(email=email)
     except Coaches.DoesNotExist:
@@ -92,6 +121,7 @@ def ownProfile(request):
             'name': coach.name,
             'email': coach.email,
             'phone': coach.phone,
+            'image': coach.image.url ,
             'address': coach.address,
             'city': coach.city,
             'state': coach.state,
@@ -111,17 +141,26 @@ def ownProfile(request):
             'description': coach.description,
         }
         return JsonResponse(data)
+
     elif request.method == 'POST':
         try:
             body = json.loads(request.body)
         except Exception:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
-        # Update fields if present in request
-        for field in ['name', 'phone', 'address', 'city', 'state', 'zip', 'country', 'domain', 'experience', 'location', 'price', 'rating', 'reviews', 'availability', 'availability_days', 'connections', 'followers', 'following', 'description']:
+
+        # Update fields if present
+        for field in ['name', 'phone', 'address', 'city', 'state', 'zip', 'country',
+                      'domain', 'experience', 'location', 'price', 'rating', 'reviews',
+                      'availability', 'availability_days', 'connections',
+                      'followers', 'following', 'description']:
             if field in body:
                 setattr(coach, field, body[field])
+
+        # Optional: handle image update (if using base64 or file upload, you must adjust this)
+        # For JSON body, image upload won't work unless it's a URL or base64
+
         coach.save()
         return JsonResponse({'success': True})
+
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
-  

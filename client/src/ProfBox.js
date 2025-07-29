@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import DomainSidebar from './DomainSidebar';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 function ProfBox({ coaches }) {
 
   // let token = sessionStorage.getItem('token');
+  const navigate = useNavigate();
   let[token,setToken]=useState(sessionStorage.getItem('token'));
   useEffect(() => {
   const interval = setInterval(() => {
@@ -41,9 +43,11 @@ function ProfBox({ coaches }) {
           placeholder="Search coaches..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="search-input"
+              className="search-input"
+              
             />
             <div id='log-sign-buttons'>
+              <button id="ai-button" onClick={() => navigate('/ai')}>AI</button>
               {!token && <Link to='/signup'><button id="signbut">signup</button></Link>}
               {!token && <Link to='/logins'><button id="logbut">login</button></Link>}
               {token && <Link to='/own-profile'><button >Profile</button></Link>}
@@ -78,6 +82,7 @@ function ProfBox({ coaches }) {
             </div>
           )}
         </main>
+
       </div>
             </div>
         </>

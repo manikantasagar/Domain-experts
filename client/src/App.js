@@ -12,7 +12,7 @@ function App() {
       .then(data => setCoaches(data))
       .catch(error => console.error('Error fetching coaches:', error));
   }, []);
-// console.log(coaches.image);
+console.log(coaches);
   // Dynamically get domains from fetched coaches
  
 

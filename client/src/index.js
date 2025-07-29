@@ -10,7 +10,7 @@ import Profile from './Profile'; // Importing the Profile component
 import Signup from './Signup'
 import Login from './Login'; // Importing the Login component
 import { OwnProfile }  from './OwnProfile';
-
+import AI from './AI';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -24,6 +24,7 @@ root.render(
         <Route path="/signup" element={<Signup />} />
         <Route path="/logins" element={<Login />} />
         <Route path="/own-profile" element={<OwnProfile/>}/>
+        <Route path="/ai" element={<AI/>}/>
         
       </Routes>
     </BrowserRouter>
