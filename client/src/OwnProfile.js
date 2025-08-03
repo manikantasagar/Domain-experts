@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './App.css';
 
 export const OwnProfile = () => {
@@ -6,22 +7,40 @@ export const OwnProfile = () => {
     const [editMode, setEditMode] = useState(false);
     const [form, setForm] = useState({});
     const [message, setMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
+        // Check if user is authenticated and is a coach
+        const userEmail = sessionStorage.getItem('user-mail');
+        const userType = sessionStorage.getItem('user-type');
+        
+        if (!userEmail) {
+            navigate('/logins');
+            return;
+        }
+        
+        if (userType !== 'coach') {
+            navigate('/user-profile');
+            return;
+        }
+
         const fetchData = async () => {
             try {
-                const email = sessionStorage.getItem('user-mail');
-                const res = await fetch('http://localhost:8000/home/own-profile?email=' + email);
+                setIsLoading(true);
+                const res = await fetch('http://localhost:8000/home/own-profile?email=' + userEmail);
                 const json = await res.json();
                 setData(json);
                 console.log(json.image);
                 setForm(json);
             } catch (error) {
                 setMessage('Error fetching data');
+            } finally {
+                setIsLoading(false);
             }
         };
         fetchData();
-    }, []);
+    }, [navigate]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -37,8 +56,10 @@ export const OwnProfile = () => {
         setForm(data);
         setMessage('');
     };
+    
     const handleSave = async () => {
         try {
+            setIsLoading(true);
             const email = sessionStorage.getItem('user-mail');
             const res = await fetch('http://localhost:8000/home/own-profile?email=' + email, {
                 method: 'POST',
@@ -55,52 +76,83 @@ export const OwnProfile = () => {
             }
         } catch (error) {
             setMessage('Error updating profile');
+        } finally {
+            setIsLoading(false);
         }
     };
+
+    if (isLoading && !data.name) {
+        return (
+            <div className="ownprofile-container">
+                <div className="ownprofile-main">
+                    <div className="ownprofile-card">
+                        <div style={{ textAlign: 'center', padding: '40px' }}>
+                            <div style={{ fontSize: '24px', color: '#667eea', marginBottom: '20px' }}>Loading...</div>
+                            <div style={{ width: '40px', height: '40px', border: '4px solid #e2e8f0', borderTop: '4px solid #667eea', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto' }}></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     if (!data || data.error) return <div>{data.error || 'Loading...'}</div>;
 
     // Profile fields for display and edit
     const fields = {
-        name: 'Name',
-        email: 'Email',
+        
         phone: 'Phone',
         address: 'Address',
-        city: 'City',
-        state: 'State',
-        zip: 'Zip',
-        country: 'Country',
-        domain: 'Domain',
-        experience: 'Experience',
         location: 'Location',
         price: 'Price',
-        rating: 'Rating',
-        reviews: 'Reviews',
         availability: 'Availability',
         availability_days: 'Availability Days',
         
+    };
+
+    // Icons for different field types
+    const getFieldIcon = (fieldName) => {
+        const icons = {
+            phone: '📞',
+            address: '📍',
+            location: '🗺️',
+            price: '💰',
+            availability: '📅',
+            availability_days: '📆',
+        };
+        return icons[fieldName] || '📋';
     };
 
     return (
         <div className="ownprofile-container">
             {/* Sidebar */}
             <div className="ownprofile-sidebar">
-                <div className="ownprofile-sidebar-title">My Menu</div>
+                <div className="ownprofile-sidebar-title">My Profile</div>
                 <button
                     onClick={() => setEditMode(true)}
                     className={`ownprofile-sidebar-btn${editMode ? ' editing' : ''}`}
                     disabled={editMode}
                 >
-                    Edit Profile
+                    {editMode ? '🔄 Editing...' : '✏️ Edit Profile'}
                 </button>
                 {editMode && (
                     <button
                         onClick={handleCancel}
                         className="ownprofile-sidebar-btn cancel"
                     >
-                        Cancel
+                        ❌ Cancel
                     </button>
                 )}
+                <button
+                    onClick={() => {
+                        sessionStorage.clear();
+                        navigate('/logins');
+                    }}
+                    className="ownprofile-sidebar-btn"
+                    style={{ backgroundColor: '#dc3545', marginTop: 'auto' }}
+                >
+                    🚪 Logout
+                </button>
             </div>
 
             {/* Main Profile Area */}
@@ -110,43 +162,81 @@ export const OwnProfile = () => {
                         <div className="ownprofile-avatar">
                             {/* Profile image or initials */}
                             {data.image ? (
-                                <img src={`http://localhost:8000/${data.image}`}  alt="Profile" />
+                                <img src={`http://localhost:8000/${data.image}`} alt="Profile" />
                             ) : (
                                 <span>{data.name ? data.name[0].toUpperCase() : '?'}</span>
                             )}
                         </div>
                         <div className="ownprofile-header-info">
-                            <div className="ownprofile-header-name">{data.name}</div>
-                            <div className="ownprofile-header-email">{data.email}</div>
-                            <div className="ownprofile-header-domain">{data.domain}</div>
+                            <div className="ownprofile-header-name">{data.name || 'Your Name'}</div>
+                            <div className="ownprofile-header-email">{data.email || 'your.email@example.com'}</div>
+                            <div className="ownprofile-header-domain">{data.domain || 'Your Domain'}</div>
+                            <div className="ownprofile-header-rating">{data.rating || '0'}</div>
                         </div>
                     </div>
-                    {message && <div className={`ownprofile-message${message.includes('success') ? ' success' : ' error'}`}>{message}</div>}
+                    
+                    {message && (
+                        <div className={`ownprofile-message${message.includes('success') ? ' success' : ' error'}`}>
+                            {message.includes('success') ? '✅' : '❌'} {message}
+                        </div>
+                    )}
+                    
                     {editMode ? (
                         <form onSubmit={e => { e.preventDefault(); handleSave(); }}>
                             {Object.entries(fields).map(([key, label]) => (
                                 <div key={key} className="ownprofile-form-row">
-                                    <label className="ownprofile-form-label">{label}:</label>
-                                    {key === 'email' ? (
-                                        <input name={key} value={form[key] || ''} disabled className="ownprofile-form-input" />
-                                    ) : key === 'availability' ? (
-                                        <input type="checkbox" name={key} checked={!!form[key]} disabled={!editMode} onChange={handleChange} />
+                                    <label className="ownprofile-form-label">
+                                        {getFieldIcon(key)} {label}:
+                                    </label>
+                                    { key === 'availability' ? (
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <input 
+                                                type="checkbox" 
+                                                name={key} 
+                                                checked={!!form[key]} 
+                                                disabled={!editMode} 
+                                                onChange={handleChange} 
+                                            />
+                                            <span style={{ color: '#718096' }}>Available for coaching</span>
+                                        </div>
                                     ) : key === 'description' ? (
-                                        <textarea name={key} value={form[key] || ''} disabled={!editMode} onChange={handleChange} className="ownprofile-form-description" />
+                                        <textarea 
+                                            name={key} 
+                                            value={form[key] || ''} 
+                                            disabled={!editMode} 
+                                            onChange={handleChange} 
+                                            className="ownprofile-form-description"
+                                            placeholder={`Enter your ${label.toLowerCase()}`}
+                                        />
                                     ) : (
-                                        <input name={key} value={form[key] || ''} disabled={!editMode} onChange={handleChange} className="ownprofile-form-input" />
+                                        <input 
+                                            name={key} 
+                                            value={form[key] || ''} 
+                                            disabled={!editMode} 
+                                            onChange={handleChange} 
+                                            className="ownprofile-form-input"
+                                            placeholder={`Enter your ${label.toLowerCase()}`}
+                                        />
                                     )}
                                 </div>
                             ))}
-                            <button type="submit" className="ownprofile-form-btn">Save</button>
+                            <button 
+                                type="submit" 
+                                className="ownprofile-form-btn"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? '⏳ Saving...' : '💾 Save Changes'}
+                            </button>
                         </form>
                     ) : (
                         <div>
                             {Object.entries(fields).map(([key, label]) => (
                                 <div key={key} className={`ownprofile-form-row ${key === 'description' ? 'description-mode' : 'display-mode'}`}>
-                                    <div className={`ownprofile-form-label ${key !== 'description' ? 'display-mode' : ''}`}>{label}:</div>
+                                    <div className={`ownprofile-form-label ${key !== 'description' ? 'display-mode' : ''}`}>
+                                        {getFieldIcon(key)} {label}:
+                                    </div>
                                     <div className={key === 'description' ? 'ownprofile-form-description' : 'ownprofile-form-description display-mode'}>
-                                        {key === 'availability' ? (data[key] ? 'Available' : 'Not Available') : data[key]}
+                                        {key === 'availability' ? (data[key] ? '✅ Available' : '❌ Not Available') : data[key] || 'Not specified'}
                                     </div>
                                 </div>
                             ))}
@@ -157,3 +247,4 @@ export const OwnProfile = () => {
         </div>
     );
 };
+

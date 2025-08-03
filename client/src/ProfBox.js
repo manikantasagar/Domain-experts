@@ -50,7 +50,7 @@ function ProfBox({ coaches }) {
               <button id="ai-button" onClick={() => navigate('/ai')}>AI</button>
               {!token && <Link to='/signup'><button id="signbut">signup</button></Link>}
               {!token && <Link to='/logins'><button id="logbut">login</button></Link>}
-              {token && <Link to='/own-profile'><button >Profile</button></Link>}
+              {token && <Link to='/profile'><button >Profile</button></Link>}
             
             
             </div>
@@ -71,6 +71,7 @@ function ProfBox({ coaches }) {
                   <h4>{coach.name}</h4>
                   <Link to= "/profile"  state={{coach }} >
                     {/* {console.log(coach)} */}
+                    {console.log(coach.image)}
                     <img src={`http://localhost:8000/${coach.image}`} alt={coach.name} />
                   </Link>
                   <span className="coach-domain">{coach.domain}</span>

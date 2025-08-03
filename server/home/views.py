@@ -2,7 +2,7 @@ from django.shortcuts import render
 import matplotlib.pyplot as plt
 from io import BytesIO
 from django.http import HttpResponse
-from .models import Coaches
+from .models import Coaches, Users
 from django.contrib import admin
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -24,7 +24,7 @@ def home(request):
             'name': coach.name,
             'email': coach.email,
             'phone': coach.phone,
-            'image': coach.image.url,
+            'image': coach.image.url if coach.image else None,
             'address': coach.address,
             'city': coach.city,
             'state': coach.state,
@@ -77,28 +77,86 @@ def signup(request):
 
 @csrf_exempt
 @require_http_methods(["POST"])
+def signup_user(request):
+    try:
+        print("Received signup_user request")
+        data = json.loads(request.body)
+        print("Request data:", data)
+        name = data.get('name')
+        email = data.get('email')
+        password = data.get('password')
+        
+        print(f"Parsed data - name: {name}, email: {email}")
+        
+        if not all([name, email, password]):
+            print("Missing required fields")
+            return JsonResponse({'error': 'Name, email and password are required.'}, status=400)
+        
+        # Check if email already exists
+        if Users.objects.filter(email=email).exists():
+            print("Email already exists")
+            return JsonResponse({'error': 'Email already registered.'}, status=400)
+        
+        user = Users(
+            name=name,
+            email=email,
+            password=make_password(password)
+        )
+        user.save()
+        print(f"User saved successfully with ID: {user.id}")
+        return JsonResponse({'success': True, 'id': user.id})
+    except Exception as e:
+        print(f"Error in signup_user: {str(e)}")
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
 def login(request):
     try:
         data = json.loads(request.body)
         email = data.get('email')
-        # print("maniiiii")
         password = data.get('password')
+        print(f"Login attempt for email: {email}")
+        
         if not all([email, password]):
             return JsonResponse({'error': 'Email and password required.'}, status=400)
+        
+        # First try to find a coach
         try:
             coach = Coaches.objects.get(email=email)
+            if check_password(password, coach.password):
+                payload = {
+                    'id': coach.id,
+                    'email': coach.email,
+                    'name': coach.name,
+                    'user_type': 'coach'
+                }
+                token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+                print(f"Coach login successful: {coach.name}")
+                return JsonResponse({'token': token, 'user_type': 'coach'})
+            else:
+                return JsonResponse({'error': 'Invalid credentials.'}, status=401)
         except Coaches.DoesNotExist:
-            return JsonResponse({'error': 'Invalid credentials.'}, status=401)
-        if not check_password(password, coach.password):
-            return JsonResponse({'error': 'Invalid credentials.'}, status=401)
-        payload = {
-            'id': coach.id,
-            'email': coach.email,
-            'name': coach.name
-        }
-        token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
-        return JsonResponse({'token': token})
+            # If not a coach, try to find a user
+            try:
+                user = Users.objects.get(email=email)
+                if check_password(password, user.password):
+                    payload = {
+                        'id': user.id,
+                        'email': user.email,
+                        'name': user.name,
+                        'user_type': 'user'
+                    }
+                    token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+                    print(f"User login successful: {user.name}")
+                    return JsonResponse({'token': token, 'user_type': 'user'})
+                else:
+                    return JsonResponse({'error': 'Invalid credentials.'}, status=401)
+            except Users.DoesNotExist:
+                return JsonResponse({'error': 'Invalid credentials.'}, status=401)
     except Exception as e:
+        print(f"Login error: {str(e)}")
         return JsonResponse({'error': str(e)}, status=500)
     
 
@@ -164,3 +222,45 @@ def ownProfile(request):
 
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+
+@csrf_exempt
+def userProfile(request):
+    email = request.GET.get('email')
+    if not email:
+        return JsonResponse({'error': 'Email is required'}, status=400)
+
+    try:
+        user = Users.objects.get(email=email)
+    except Users.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+
+    if request.method == 'GET':
+        data = {
+            'name': user.name,
+            'email': user.email,
+            'created_at': user.created_at,
+        }
+        return JsonResponse(data)
+
+    elif request.method == 'POST':
+        try:
+            body = json.loads(request.body)
+        except Exception:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+        # Update fields if present
+        for field in ['name']:
+            if field in body:
+                setattr(user, field, body[field])
+
+        user.save()
+        return JsonResponse({'success': True})
+
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+
+# @csrf_exempt
+# def chart(request):
+    

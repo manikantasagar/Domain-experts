@@ -8,22 +8,22 @@ function AI() {
         { id: 3, name: 'Art' },
     ];
 
-    const [categories] = useState(sampleCategories);
-    const [selectedCategory, setSelectedCategory] = useState(null);
+    // const [categories] = useState(sampleCategories);
+    // const [selectedCategory, setSelectedCategory] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [chatHistory, setChatHistory] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const handleCategoryClick = (categ) => {
-        setSelectedCategory(categ);
+        // setSelectedCategory(categ);
         setChatHistory([]);
         setError(null);
     };
 
     const handleSearch = async (e) => {
         e.preventDefault();
-        if (!selectedCategory || !searchTerm.trim()) return;
+        // if (!selectedCategory || !searchTerm.trim()) return;
 
         const userMessage = {
             type: 'user',
@@ -43,7 +43,7 @@ function AI() {
                 },
                 body: JSON.stringify({
                     message: searchTerm,
-                    category: selectedCategory.name
+                    // category: selectedCategory.name
                 }),
             });
             if (!response.ok) {
@@ -77,27 +77,12 @@ function AI() {
 
     return (
         <div className="ai-container">
-            <div className="left-section">
-                <h2>Categories</h2>
-                <div className="ai-category-list">
-                    {categories.map((categ) => (
-                        <button
-                            className={`ai-category-btn ${selectedCategory?.id === categ.id ? 'selected' : ''}`}
-                            key={categ.id}
-                            onClick={() => handleCategoryClick(categ)}
-                        >
-                            {categ.name}
-                        </button>
-                    ))}
-                </div>
-            </div>
+            
 
             <div className="right-section">
                 <div className="ai-chat-container">
                     <div className="ai-chat-history">
-                        {!selectedCategory ? (
-                            <div className="ai-chat-placeholder">Please select a category to start.</div>
-                        ) : chatHistory.length === 0 ? (
+                        { chatHistory.length === 0 ? (
                             <div className="ai-chat-placeholder">Ask your first question!</div>
                         ) : (
                             <>
@@ -125,13 +110,13 @@ function AI() {
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             onKeyPress={handleKeyPress}
-                            placeholder={selectedCategory ? "Type your question..." : "Select a category first"}
-                            disabled={!selectedCategory || isLoading}
+                            // placeholder={selectedCategory ? "Type your question..." : "Select a category first"}
+                            // disabled={!selectedCategory || isLoading}
                             rows="3"
                         />
                         <button 
                             type="submit"
-                            disabled={!selectedCategory || !searchTerm.trim() || isLoading}
+                            // disabled={!selectedCategory || !searchTerm.trim() || isLoading}
                         >
                             {isLoading ? 'Sending...' : 'Send'}
                         </button>

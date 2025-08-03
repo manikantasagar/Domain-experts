@@ -10,6 +10,8 @@ import Profile from './Profile'; // Importing the Profile component
 import Signup from './Signup'
 import Login from './Login'; // Importing the Login component
 import { OwnProfile }  from './OwnProfile';
+import UserProfile from './UserProfile';
+import ProfileRedirect from './ProfileRedirect';
 import AI from './AI';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -20,10 +22,11 @@ root.render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/chat" element={<Chat />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<ProfileRedirect />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/logins" element={<Login />} />
         <Route path="/own-profile" element={<OwnProfile/>}/>
+        <Route path="/user-profile" element={<UserProfile/>}/>
         <Route path="/ai" element={<AI/>}/>
         
       </Routes>

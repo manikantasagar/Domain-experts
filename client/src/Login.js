@@ -23,19 +23,20 @@ function Login() {
         body: JSON.stringify(form)
       });
       const data = await response.json();
-      console.log(data.token)
+      console.log('Login response:', data);
       if (response.ok && data.token) {
         sessionStorage.setItem('token', data.token);
-        console.log(form.email)
-        sessionStorage.setItem('user-mail',form.email)
-        alert('Login successful!');
+        sessionStorage.setItem('user-mail', form.email);
+        sessionStorage.setItem('user-type', data.user_type);
+        console.log('User type:', data.user_type);
+        alert(`Login successful! Welcome ${data.user_type === 'coach' ? 'Coach' : 'User'}!`);
         navigate('/');
       } else {
         setError(data.error || 'Login failed.');
       }
     } catch (err) {
+      console.error('Login error:', err);
       setError('Server error.');
-      // console.log(err)
     }
     setLoading(false);
   };
