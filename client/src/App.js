@@ -7,11 +7,12 @@ function App() {
   const [coaches, setCoaches] = useState([]);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_SERVER_URL}home/`)
+    fetch(`${process.env.REACT_APP_SERVER_URL}/home/`)
       .then(response => response.json())
       .then(data => setCoaches(data))
       .catch(error => console.error('Error fetching coaches:', error));
   }, []);
+  console.log(`${process.env.REACT_APP_SERVER_URL}/home/`);
   console.log(coaches);
   // Dynamically get domains from fetched coaches
 

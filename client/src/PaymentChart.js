@@ -14,7 +14,7 @@ function PaymentChart({ coachId }) {
   const fetchPaymentStats = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:8000/home/payment-stats/?coach_id=${coachId}`);
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/home/payment-stats/?coach_id=${coachId}`);
       const data = await response.json();
       
       if (response.ok) {

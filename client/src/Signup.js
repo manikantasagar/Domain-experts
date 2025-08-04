@@ -29,7 +29,7 @@ function Signup() {
     try {
       if(!form.coach){  
         // User signup
-        response = await fetch(`${process.env.REACT_APP_SERVER_URL}home/signups_user/`, {
+        response = await fetch(`${process.env.REACT_APP_SERVER_URL}/home/signups_user/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(form)
@@ -37,7 +37,7 @@ function Signup() {
       }
       else{
         // Coach signup
-        response = await fetch(`${process.env.REACT_APP_SERVER_URL}home/signups/`, {
+        response = await fetch(`${process.env.REACT_APP_SERVER_URL}/home/signups/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(form)

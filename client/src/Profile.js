@@ -24,7 +24,7 @@ function ConnectFollowButtons({ coach }) {
     setMessage('');
     
     try {
-      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}home/connect-coach/`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/home/connect-coach/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -59,7 +59,7 @@ function ConnectFollowButtons({ coach }) {
     setMessage('');
     
     try {
-      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}home/follow-user/`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/home/follow-user/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -195,7 +195,7 @@ function Profile() {
         {/* Header Section */}
         <div className="profile-header">
           <div className="profile-avatar-container">
-            <img src={`${process.env.REACT_APP_SERVER_URL}${coach.image}`} alt={coach.name} className="profile-avatar" />
+            <img src={`${process.env.REACT_APP_SERVER_URL}/${coach.image}`} alt={coach.name} className="profile-avatar" />
             <div className="profile-status">
               {coach.availability ? '🟢 Available' : '🔴 Not Available'}
             </div>

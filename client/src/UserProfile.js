@@ -49,7 +49,7 @@ function UserProfile() {
   const handleSave = async () => {
     try {
       const userEmail = sessionStorage.getItem('user-mail');
-      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}home/user-profile?email=${userEmail}`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/home/user-profile?email=${userEmail}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editForm)

@@ -32,7 +32,7 @@ function PaymentModal({ coach, isOpen, onClose, onPaymentSuccess }) {
 
       // In a real app, you'd get the user ID from the backend
       // For now, we'll use a placeholder
-      const response = await fetch('http://localhost:8000/home/make-payment/', {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/home/make-payment/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
