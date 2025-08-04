@@ -115,6 +115,17 @@ DATABASES = {
         conn_max_age=600,
     )
 }
+
+#   DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': 'coaches',
+#             'USER': 'postgres',
+#             'PASSWORD': 'Manisai@2003',
+#             'HOST': 'localhost',
+#             'PORT': '5432',
+#         }
+#     }
 MEDIA_URL = '/coaches/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'coaches')
 
