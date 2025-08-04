@@ -52,7 +52,7 @@ MIDDLEWARE = [
     
 ]
 # CORS Settings
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
 # CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
@@ -63,6 +63,17 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
 ]
+
+
+CORS_ALLOWED_ORIGINS = [
+    "https://domain-experts.vercel.app",
+]
+
+ALLOWED_HOSTS = ['domain-experts.onrender.com', 'localhost', '127.0.0.1']
+CSRF_TRUSTED_ORIGINS = [
+    "https://your-vercel-project-name.vercel.app",
+]
+
 CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
@@ -74,7 +85,7 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
-ALLOWED_HOSTS=['*']
+# ALLOWED_HOSTS=['*']
 # Security Settings
 # CSRF_TRUSTED_ORIGINS = True
 ROOT_URLCONF = 'backend.urls'
