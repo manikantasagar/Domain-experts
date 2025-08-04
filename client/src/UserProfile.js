@@ -22,9 +22,12 @@ function UserProfile() {
   }, [navigate]);
 
   const fetchProfile = async (email) => {
+    console.log('REACT_APP_SERVER_URL:', process.env.REACT_APP_SERVER_URL);
+    console.log('REACT_APP_WS_URL:', process.env.REACT_APP_WS_URL);
     try {
-      const response = await fetch(`http://localhost:8000/home/user-profile?email=${email}`);
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/home/user-profile?email=${email}`);
       const data = await response.json();
+      // process.env.SERVER_URL
       
       if (response.ok) {
         setProfile(data);
@@ -46,7 +49,7 @@ function UserProfile() {
   const handleSave = async () => {
     try {
       const userEmail = sessionStorage.getItem('user-mail');
-      const response = await fetch(`http://localhost:8000/home/user-profile?email=${userEmail}`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}home/user-profile?email=${userEmail}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editForm)
@@ -84,9 +87,11 @@ function UserProfile() {
   }
 
   return (
+
     <div style={{ maxWidth: 600, margin: '2rem auto', padding: 20, border: '1px solid #ccc', borderRadius: 8 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h2>User Profile</h2>
+        {console.log('REACT_APP_SERVER_URL:', process.env.REACT_APP_SERVER_URL)}
         <button onClick={handleLogout} style={{ padding: '8px 16px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px' }}>
           Logout
         </button>

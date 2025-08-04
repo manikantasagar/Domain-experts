@@ -36,7 +36,7 @@ function AI() {
         setError(null);
 
         try {
-            const response = await fetch('http://localhost:8000/aichat', {
+            const response = await fetch(`${process.env.REACT_APP_SERVER_URL}aichat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

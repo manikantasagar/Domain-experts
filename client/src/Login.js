@@ -17,7 +17,7 @@ function Login() {
     setLoading(true);
     console.log(form)
     try {
-      const response = await fetch('http://localhost:8000/home/logins/', {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}home/logins/`, {
         method: 'POST',      
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)

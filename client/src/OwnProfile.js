@@ -30,7 +30,7 @@ export const OwnProfile = () => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                const res = await fetch('http://localhost:8000/home/own-profile?email=' + userEmail);
+                const res = await fetch(`${process.env.REACT_APP_SERVER_URL}home/own-profile?email=` + userEmail);
                 const json = await res.json();
                 setData(json);
                 console.log(json.image);
@@ -63,7 +63,7 @@ export const OwnProfile = () => {
         try {
             setIsLoading(true);
             const email = sessionStorage.getItem('user-mail');
-            const res = await fetch('http://localhost:8000/home/own-profile?email=' + email, {
+            const res = await fetch(`${process.env.REACT_APP_SERVER_URL}home/own-profile?email=` + email, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(form),
@@ -164,7 +164,7 @@ export const OwnProfile = () => {
                         <div className="ownprofile-avatar">
                             {/* Profile image or initials */}
                             {data.image ? (
-                                <img src={`http://localhost:8000/${data.image}`} alt="Profile" />
+                                <img src={`${process.env.REACT_APP_SERVER_URL}/${data.image}`} alt="Profile" />
                             ) : (
                                 <span>{data.name ? data.name[0].toUpperCase() : '?'}</span>
                             )}
