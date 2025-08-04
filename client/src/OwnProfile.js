@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
+import PaymentChart from './PaymentChart';
 
 export const OwnProfile = () => {
     const [data, setData] = useState({});
@@ -8,6 +9,7 @@ export const OwnProfile = () => {
     const [form, setForm] = useState({});
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showPaymentChart, setShowPaymentChart] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -242,6 +244,27 @@ export const OwnProfile = () => {
                             ))}
                         </div>
                     )}
+                </div>
+                
+                {/* Payment Statistics Section */}
+                <div style={{ marginTop: '2rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                        <h3 style={{ color: '#333', margin: 0 }}>💰 Payment Statistics</h3>
+                        <button 
+                            onClick={() => setShowPaymentChart(!showPaymentChart)}
+                            style={{
+                                padding: '8px 16px',
+                                backgroundColor: '#007bff',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            {showPaymentChart ? 'Hide Chart' : 'Show Chart'}
+                        </button>
+                    </div>
+                    {showPaymentChart && data.id && <PaymentChart coachId={data.id} />}
                 </div>
             </div>
         </div>

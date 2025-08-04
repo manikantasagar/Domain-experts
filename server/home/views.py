@@ -2,7 +2,7 @@ from django.shortcuts import render
 import matplotlib.pyplot as plt
 from io import BytesIO
 from django.http import HttpResponse
-from .models import Coaches, Users
+from .models import Coaches, Users, Payment
 from django.contrib import admin
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -259,6 +259,169 @@ def userProfile(request):
 
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def make_payment(request):
+    try:
+        data = json.loads(request.body)
+        coach_id = data.get('coach_id')
+        user_id = data.get('user_id')
+        amount = data.get('amount')
+        payment_method = data.get('payment_method', 'card')
+        
+        if not all([coach_id, user_id, amount]):
+            return JsonResponse({'error': 'Coach ID, user ID, and amount are required.'}, status=400)
+        
+        try:
+            coach = Coaches.objects.get(id=coach_id)
+            user = Users.objects.get(id=user_id)
+        except (Coaches.DoesNotExist, Users.DoesNotExist):
+            return JsonResponse({'error': 'Coach or user not found.'}, status=404)
+        
+        # Calculate months based on amount and coach price
+        if coach.price == 0:
+            months_paid = 1  # Free coaching for 1 month
+        else:
+            months_paid = int(amount / coach.price)
+        
+        payment = Payment.objects.create(
+            coach=coach,
+            user=user,
+            amount=amount,
+            months_paid=months_paid,
+            payment_method=payment_method
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'payment_id': payment.id,
+            'months_paid': months_paid,
+            'message': f'Payment successful! {months_paid} month(s) of coaching purchased.'
+        })
+        
+    except Exception as e:
+        print(f"Payment error: {str(e)}")
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@csrf_exempt
+def get_payment_stats(request):
+    coach_id = request.GET.get('coach_id')
+    if not coach_id:
+        return JsonResponse({'error': 'Coach ID is required'}, status=400)
+    
+    try:
+        coach = Coaches.objects.get(id=coach_id)
+    except Coaches.DoesNotExist:
+        return JsonResponse({'error': 'Coach not found'}, status=404)
+    
+    # Get monthly payment data for the last 12 months
+    from datetime import datetime, timedelta
+    from django.db.models import Sum
+    from django.utils import timezone
+    
+    current_date = timezone.now()
+    monthly_data = []
+    
+    for i in range(12):
+        month_start = current_date.replace(day=1) - timedelta(days=30*i)
+        month_end = month_start.replace(day=28) + timedelta(days=4)
+        month_end = month_end.replace(day=1) - timedelta(days=1)
+        
+        monthly_payments = Payment.objects.filter(
+            coach=coach,
+            payment_date__gte=month_start,
+            payment_date__lte=month_end
+        ).aggregate(total_amount=Sum('amount'), total_months=Sum('months_paid'))
+        
+        monthly_data.append({
+            'month': month_start.strftime('%Y-%m'),
+            'amount': float(monthly_payments['total_amount'] or 0),
+            'months_paid': int(monthly_payments['total_months'] or 0)
+        })
+    
+    # Calculate coach stability metrics
+    total_payments = Payment.objects.filter(coach=coach).count()
+    total_revenue = Payment.objects.filter(coach=coach).aggregate(Sum('amount'))['amount__sum'] or 0
+    avg_monthly_revenue = total_revenue / 12 if total_revenue > 0 else 0
+    
+    return JsonResponse({
+        'monthly_data': monthly_data,
+        'total_payments': total_payments,
+        'total_revenue': float(total_revenue),
+        'avg_monthly_revenue': float(avg_monthly_revenue),
+        'coach_price': float(coach.price)
+    })
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def connect_coach(request):
+    try:
+        data = json.loads(request.body)
+        coach_id = data.get('coach_id')
+        user_email = data.get('user_email')
+        
+        if not all([coach_id, user_email]):
+            return JsonResponse({'error': 'Coach ID and user email are required.'}, status=400)
+        
+        try:
+            coach = Coaches.objects.get(id=coach_id)
+            user = Coaches.objects.get(email=user_email)  # Only coaches can connect
+        except Coaches.DoesNotExist:
+            return JsonResponse({'error': 'Coach or user not found.'}, status=404)
+        
+        # Update connections for both coaches
+        coach.connections += 1
+        user.connections += 1
+        coach.save()
+        user.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Connected with {coach.name}',
+            'connections': coach.connections
+        })
+        
+    except Exception as e:
+        print(f"Connect error: {str(e)}")
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def follow_user(request):
+    try:
+        data = json.loads(request.body)
+        coach_id = data.get('coach_id')
+        user_email = data.get('user_email')
+        
+        if not all([coach_id, user_email]):
+            return JsonResponse({'error': 'Coach ID and user email are required.'}, status=400)
+        
+        try:
+            coach = Coaches.objects.get(id=coach_id)
+            user = Users.objects.get(email=user_email)  # Users can follow coaches
+        except (Coaches.DoesNotExist, Users.DoesNotExist):
+            return JsonResponse({'error': 'Coach or user not found.'}, status=404)
+        
+        # Update followers for coach and following for user
+        coach.followers += 1
+        user.following += 1
+        coach.save()
+        user.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Now following {coach.name}',
+            'followers': coach.followers
+        })
+        
+    except Exception as e:
+        print(f"Follow error: {str(e)}")
+        return JsonResponse({'error': str(e)}, status=500)
 
 
 # @csrf_exempt

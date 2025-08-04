@@ -36,9 +36,24 @@ class Users(models.Model):
     email = models.EmailField(max_length=100, unique=True)
     password = models.CharField(max_length=128)
     created_at = models.DateTimeField(auto_now_add=True)
+    following = models.IntegerField(default=0)
     
     def __str__(self):
         return self.name
+
+class Payment(models.Model):
+    coach = models.ForeignKey(Coaches, on_delete=models.CASCADE, related_name='payments')
+    user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='payments')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    months_paid = models.IntegerField(default=1)
+    payment_date = models.DateTimeField(auto_now_add=True)
+    payment_method = models.CharField(max_length=50, default='card')
+    
+    def __str__(self):
+        return f"{self.user.name} paid {self.amount} for {self.coach.name}"
+    
+    class Meta:
+        ordering = ['-payment_date']
     
     
     
