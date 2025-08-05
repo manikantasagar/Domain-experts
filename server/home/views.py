@@ -179,7 +179,7 @@ def ownProfile(request):
             'name': coach.name,
             'email': coach.email,
             'phone': coach.phone,
-            'image': coach.image.url ,
+            'image': coach.image.url if coach.image else None,
             'address': coach.address,
             'city': coach.city,
             'state': coach.state,
