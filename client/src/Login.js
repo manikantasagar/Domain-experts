@@ -15,6 +15,7 @@ function Login() {
     e.preventDefault();
     setError('');
     setLoading(true);
+    console.log(process.env.REACT_APP_SERVER_URL)
     console.log(form)
     try {
       const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/home/logins/`, {
