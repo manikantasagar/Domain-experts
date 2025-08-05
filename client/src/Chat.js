@@ -24,7 +24,7 @@ function Chat(){
     console.log("Attempting WebSocket connection with:", { otherEmail, token, myEmail });
     
     // Test the WebSocket URL first
-    const wsUrl = `${process.env.REACT_APP_WS_URL}ws/chat/${otherEmail}/?token=${token}`;
+    const wsUrl = `${process.env.REACT_APP_WS_URL}/ws/chat/${otherEmail}/?token=${token}`;
     console.log("WebSocket URL:", wsUrl);
     
     const ws = new WebSocket(wsUrl);

@@ -163,7 +163,6 @@ def login(request):
 
 
 @csrf_exempt
-
 def ownProfile(request):
     email = request.GET.get('email')
     if not email:
@@ -179,7 +178,7 @@ def ownProfile(request):
             'name': coach.name,
             'email': coach.email,
             'phone': coach.phone,
-            'image': coach.image.url ,
+            'image': coach.image.url  if coach.image else None ,
             'address': coach.address,
             'city': coach.city,
             'state': coach.state,
@@ -203,22 +202,34 @@ def ownProfile(request):
     elif request.method == 'POST':
         try:
             body = json.loads(request.body)
-        except Exception:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
-
-        # Update fields if present
-        for field in ['name', 'phone', 'address', 'city', 'state', 'zip', 'country',
-                      'domain', 'experience', 'location', 'price', 'rating', 'reviews',
-                      'availability', 'availability_days', 'connections',
-                      'followers', 'following', 'description']:
-            if field in body:
-                setattr(coach, field, body[field])
-
-        # Optional: handle image update (if using base64 or file upload, you must adjust this)
-        # For JSON body, image upload won't work unless it's a URL or base64
-
-        coach.save()
-        return JsonResponse({'success': True})
+            print("Received update data:", body)  # Debug print
+            
+            # Validate required fields
+            allowed_fields = ['name', 'phone', 'address', 'city', 'state', 'zip', 
+                            'country', 'domain', 'experience', 'location', 'price', 
+                            'availability', 'availability_days', 'description']
+            
+            update_data = {k: v for k, v in body.items() if k in allowed_fields}
+            
+            # Update only provided fields
+            for field, value in update_data.items():
+                setattr(coach, field, value)
+            
+            coach.save()
+            return JsonResponse({
+                'success': True,
+                'message': 'Profile updated successfully',
+                'updated_fields': list(update_data.keys())
+            })
+            
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+        except Exception as e:
+            print(f"Profile update error: {str(e)}")  # Debug print
+            return JsonResponse({
+                'error': 'Failed to update profile',
+                'detail': str(e)
+            }, status=500)
 
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
@@ -426,4 +437,3 @@ def follow_user(request):
 
 # @csrf_exempt
 # def chart(request):
-    

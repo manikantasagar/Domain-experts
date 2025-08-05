@@ -74,6 +74,7 @@ export const OwnProfile = () => {
                 setEditMode(false);
                 setMessage('Profile updated successfully!');
             } else {
+                console.error(result);
                 setMessage(result.error || 'Update failed');
             }
         } catch (error) {
