@@ -72,9 +72,9 @@ function ProfBox({ coaches }) {
                   <Link to= "/profile"  state={{coach }} >
                     {/* {console.log(coach)} */}
 
-                    {console.log(process.env.REACT_APP_SERVER_URL)}
-                    {console.log(coach.image)}
-                    <img src={`${process.env.REACT_APP_SERVER_URL}/coaches/${coach.image}`} alt={coach.name} />
+                    {/* {console.log(process.env.REACT_APP_SERVER_URL)} */}
+                    {console.log(`${process.env.REACT_APP_SERVER_URL}${coach.image}`)}
+                    <img src={`${process.env.REACT_APP_SERVER_URL}${coach.image}`} alt={coach.name} />
                   </Link>
                   <span className="coach-domain">{coach.domain}</span>
                   

@@ -5,8 +5,8 @@ from home import views
 from django.urls import include
 from django.conf.urls.static import static
 from django.conf import settings
-import chatting.urls
-import ai.urls
+# import chatting.urls
+# import ai.urls
 import os
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')

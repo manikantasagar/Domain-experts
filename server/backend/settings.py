@@ -126,8 +126,8 @@ DATABASES = {
 #             'PORT': '5432',
 #         }
 #     }
-MEDIA_URL = '/coaches/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'coaches')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Password validation
