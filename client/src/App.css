@@ -1274,3 +1274,39 @@ transition: background 0.2s;
 background: #bbb;
 cursor: not-allowed;
 }
+
+.profile-image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background-color: #f0f0f0;
+  margin-bottom: 20px;
+}
+
+/* For the image upload preview in OwnProfile */
+.profile-image-upload {
+  position: relative;
+  cursor: pointer;
+}
+
+.profile-image-upload:hover::after {
+  content: 'Change Photo';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 8px;
+  text-align: center;
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+
+/* For image upload input */
+.profile-image-input {
+  display: none;
+}

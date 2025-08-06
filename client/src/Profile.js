@@ -133,6 +133,8 @@ function Profile() {
   const [showChat, setShowChat] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showPaymentChart, setShowPaymentChart] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     // If no coach data, check if user clicked "Profile" button
@@ -187,6 +189,67 @@ function Profile() {
       following: '👥',
     };
     return icons[fieldName] || '📋';
+  };
+
+  const handleImageSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      setIsLoading(true);
+      const email = sessionStorage.getItem('user-mail');
+      
+      // Create FormData if there's an image to upload
+      if (selectedImage) {
+        const formData = new FormData();
+        formData.append('image', selectedImage);
+        // Append other form data
+        Object.keys(form).forEach(key => {
+          formData.append(key, form[key]);
+        });
+
+        const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/home/own-profile?email=${email}`, {
+          method: 'POST',
+          body: formData, // Send as FormData
+        });
+        const result = await res.json();
+        if (result.success) {
+          setData({ ...form, image: result.image });
+          setEditMode(false);
+          setMessage('Profile updated successfully!');
+          setSelectedImage(null);
+          setImagePreview(null);
+        } else {
+          console.error(result);
+          setMessage(result.error || 'Update failed');
+        }
+      } else {
+        // If no image to upload, proceed with regular update
+        const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/home/own-profile?email=${email}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(form),
+        });
+        const result = await res.json();
+        if (result.success) {
+          setData(form);
+          setEditMode(false);
+          setMessage('Profile updated successfully!');
+        } else {
+          console.error(result);
+          setMessage(result.error || 'Update failed');
+        }
+      }
+    } catch (error) {
+      setMessage('Error updating profile');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

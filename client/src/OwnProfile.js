@@ -10,6 +10,8 @@ export const OwnProfile = () => {
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [showPaymentChart, setShowPaymentChart] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -59,23 +61,59 @@ export const OwnProfile = () => {
         setMessage('');
     };
     
+    const handleImageSelect = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            setSelectedImage(file);
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
+
     const handleSave = async () => {
         try {
             setIsLoading(true);
             const email = sessionStorage.getItem('user-mail');
-            const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/home/own-profile?email=` + email, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(form),
-            });
-            const result = await res.json();
-            if (result.success) {
-                setData(form);
-                setEditMode(false);
-                setMessage('Profile updated successfully!');
+            
+            // Create FormData if there's an image to upload
+            if (selectedImage) {
+                const formData = new FormData();
+                formData.append('image', selectedImage);
+                // Append other form data
+                Object.keys(form).forEach(key => {
+                    formData.append(key, form[key]);
+                });
+
+                const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/home/own-profile?email=${email}`, {
+                    method: 'POST',
+                    body: formData, // Send as FormData
+                });
+                const result = await res.json();
+                if (result.success) {
+                    setData({ ...form, image: result.image });
+                    setEditMode(false);
+                    setMessage('Profile updated successfully!');
+                    setSelectedImage(null);
+                    setImagePreview(null);
+                } else {
+                    console.error(result);
+                    setMessage(result.error || 'Update failed');
+                }
             } else {
-                console.error(result);
-                setMessage(result.error || 'Update failed');
+                // If no image to upload, proceed with regular update
+                const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/home/own-profile?email=${email}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(form),
+                });
+                const result = await res.json();
+                if (result.success) {
+                    setData(form);
+                    setEditMode(false);
+                    setMessage('Profile updated successfully!');
+                } else {
+                    console.error(result);
+                    setMessage(result.error || 'Update failed');
+                }
             }
         } catch (error) {
             setMessage('Error updating profile');
@@ -164,10 +202,33 @@ export const OwnProfile = () => {
                     <div className="ownprofile-header">
                         <div className="ownprofile-avatar">
                             {/* Profile image or initials */}
-                            {data.image ? (
-                                <img src={`${process.env.REACT_APP_SERVER_URL}/${data.image}`} alt="Profile" />
+                            {editMode ? (
+                                <label className="profile-image-upload">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleImageSelect}
+                                        className="profile-image-input"
+                                    />
+                                    <img 
+                                        src={imagePreview || (data.image ? `${process.env.REACT_APP_SERVER_URL}${data.image}` : '/default-avatar.png')}
+                                        alt="Profile"
+                                        className="profile-image"
+                                    />
+                                    <div className="image-upload-overlay">
+                                        <span>Change Photo</span>
+                                    </div>
+                                </label>
                             ) : (
-                                <span>{data.name ? data.name[0].toUpperCase() : '?'}</span>
+                                <img 
+                                    src={data.image ? `${process.env.REACT_APP_SERVER_URL}${data.image}` : '/default-avatar.png'}
+                                    alt="Profile"
+                                    className="profile-image"
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = '/default-avatar.png';
+                                    }}
+                                />
                             )}
                         </div>
                         <div className="ownprofile-header-info">
