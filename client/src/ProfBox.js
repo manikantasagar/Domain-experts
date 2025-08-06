@@ -74,7 +74,18 @@ function ProfBox({ coaches }) {
 
                     {/* {console.log(process.env.REACT_APP_SERVER_URL)} */}
                     {console.log(`${process.env.REACT_APP_SERVER_URL}${coach.image}`)}
-                    <img src={`${process.env.REACT_APP_SERVER_URL}${coach.image}`} alt={coach.name} />
+                    <img 
+                      src={coach.image 
+                        ? `${process.env.REACT_APP_SERVER_URL}${coach.image}` 
+                        : '/default-avatar.png'
+                      } 
+                      alt={coach.name || 'Profile'}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/default-avatar.png';
+                      }}
+                      className="profile-image"
+                    />
                   </Link>
                   <span className="coach-domain">{coach.domain}</span>
                   
