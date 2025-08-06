@@ -195,7 +195,7 @@ function Profile() {
         {/* Header Section */}
         <div className="profile-header">
           <div className="profile-avatar-container">
-            <img src={`${process.env.REACT_APP_SERVER_URL}/${coach.image}`} alt={coach.name} className="profile-avatar" />
+            <img src={`${process.env.REACT_APP_SERVER_URL}${coach.image}`} alt={coach.name} className="profile-avatar" />
             <div className="profile-status">
               {coach.availability ? '🟢 Available' : '🔴 Not Available'}
             </div>
