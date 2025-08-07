@@ -201,26 +201,73 @@ def ownProfile(request):
 
     elif request.method == 'POST':
         try:
-            body = json.loads(request.body)
-            print("Received update data:", body)  # Debug print
+            # Check if this is a file upload (FormData) or regular form submission
+            if request.FILES:
+                # Handle FormData with file upload
+                print("Handling FormData with image upload")
+                
+                # Get the uploaded image
+                image_file = request.FILES.get('image')
+                if image_file:
+                    coach.image = image_file
+                
+                # Get other form data
+                allowed_fields = ['name', 'phone', 'address', 'city', 'state', 'zip', 
+                                'country', 'domain', 'experience', 'location', 'price', 
+                                'availability', 'availability_days', 'description']
+                
+                update_data = {}
+                for field in allowed_fields:
+                    if field in request.POST:
+                        value = request.POST[field]
+                        # Handle boolean fields
+                        if field == 'availability':
+                            value = value.lower() in ['true', '1', 'on']
+                        # Handle numeric fields
+                        elif field in ['experience', 'price']:
+                            try:
+                                value = int(value) if value else 0
+                            except ValueError:
+                                value = 0
+                        update_data[field] = value
+                
+                # Update fields
+                for field, value in update_data.items():
+                    setattr(coach, field, value)
+                
+                coach.save()
+                
+                # Return the updated image URL
+                image_url = coach.image.url if coach.image else None
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Profile updated successfully',
+                    'image': image_url,
+                    'updated_fields': list(update_data.keys()) + (['image'] if image_file else [])
+                })
             
-            # Validate required fields
-            allowed_fields = ['name', 'phone', 'address', 'city', 'state', 'zip', 
-                            'country', 'domain', 'experience', 'location', 'price', 
-                            'availability', 'availability_days', 'description']
-            
-            update_data = {k: v for k, v in body.items() if k in allowed_fields}
-            
-            # Update only provided fields
-            for field, value in update_data.items():
-                setattr(coach, field, value)
-            
-            coach.save()
-            return JsonResponse({
-                'success': True,
-                'message': 'Profile updated successfully',
-                'updated_fields': list(update_data.keys())
-            })
+            else:
+                # Handle regular JSON data (no file upload)
+                body = json.loads(request.body)
+                print("Received update data:", body)  # Debug print
+                
+                # Validate required fields
+                allowed_fields = ['name', 'phone', 'address', 'city', 'state', 'zip', 
+                                'country', 'domain', 'experience', 'location', 'price', 
+                                'availability', 'availability_days', 'description']
+                
+                update_data = {k: v for k, v in body.items() if k in allowed_fields}
+                
+                # Update only provided fields
+                for field, value in update_data.items():
+                    setattr(coach, field, value)
+                
+                coach.save()
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Profile updated successfully',
+                    'updated_fields': list(update_data.keys())
+                })
             
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON format'}, status=400)
