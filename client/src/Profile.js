@@ -196,15 +196,10 @@ function Profile() {
         <div className="profile-header">
           <div className="profile-avatar-container">
             <img 
-              src={coach.image 
-                ? `${process.env.REACT_APP_SERVER_URL}${coach.image}` 
-                : '/default-avatar.png'
+              src={ `${process.env.REACT_APP_SERVER_URL}${coach.image}` 
               } 
               alt={coach.name}
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = '/default-avatar.png';
-              }}
+             
               className="profile-image"
             />
             <div className="profile-status">

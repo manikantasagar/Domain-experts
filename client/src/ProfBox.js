@@ -79,11 +79,8 @@ function ProfBox({ coaches }) {
                         ? `${process.env.REACT_APP_SERVER_URL}${coach.image}` 
                         : '/default-avatar.png'
                       } 
-                      alt={coach.name || 'Profile'}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = '/default-avatar.png';
-                      }}
+                      alt={coach.name }
+                     
                       className="profile-image"
                     />
                   </Link>

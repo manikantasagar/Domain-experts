@@ -164,75 +164,76 @@ def login(request):
 
 @csrf_exempt
 def ownProfile(request):
-    email = request.GET.get('email')
-    if not email:
-        return JsonResponse({'error': 'Email is required'}, status=400)
 
-    try:
-        coach = Coaches.objects.get(email=email)
-    except Coaches.DoesNotExist:
-        return JsonResponse({'error': 'User not found'}, status=404)
+        email = request.GET.get('email')
+        if not email:
+            return JsonResponse({'error': 'Email is required'}, status=400)
 
-    if request.method == 'GET':
-        data = {
-            'name': coach.name,
-            'email': coach.email,
-            'phone': coach.phone,
-            'image': coach.image.url  if coach.image else None ,
-            'address': coach.address,
-            'city': coach.city,
-            'state': coach.state,
-            'zip': coach.zip,
-            'country': coach.country,
-            'domain': coach.domain,
-            'experience': coach.experience,
-            'location': coach.location,
-            'price': coach.price,
-            'rating': coach.rating,
-            'reviews': coach.reviews,
-            'availability': coach.availability,
-            'availability_days': coach.availability_days,
-            'connections': coach.connections,
-            'followers': coach.followers,
-            'following': coach.following,
-            'description': coach.description,
-        }
-        return JsonResponse(data)
-
-    elif request.method == 'POST':
         try:
-            body = json.loads(request.body)
-            print("Received update data:", body)  # Debug print
-            
-            # Validate required fields
-            allowed_fields = ['name', 'phone', 'address', 'city', 'state', 'zip', 
-                            'country', 'domain', 'experience', 'location', 'price', 
-                            'availability', 'availability_days', 'description']
-            
-            update_data = {k: v for k, v in body.items() if k in allowed_fields}
-            
-            # Update only provided fields
-            for field, value in update_data.items():
-                setattr(coach, field, value)
-            
-            coach.save()
-            return JsonResponse({
-                'success': True,
-                'message': 'Profile updated successfully',
-                'updated_fields': list(update_data.keys())
-            })
-            
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
-        except Exception as e:
-            print(f"Profile update error: {str(e)}")  # Debug print
-            return JsonResponse({
-                'error': 'Failed to update profile',
-                'detail': str(e)
-            }, status=500)
+            coach = Coaches.objects.get(email=email)
+        except Coaches.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
 
-    else:
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
+        if request.method == 'GET':
+            data = {
+                'name': coach.name,
+                'email': coach.email,
+                'phone': coach.phone,
+                'image': coach.image.url  if coach.image else None ,
+                'address': coach.address,
+                'city': coach.city,
+                'state': coach.state,
+                'zip': coach.zip,
+                'country': coach.country,
+                'domain': coach.domain,
+                'experience': coach.experience,
+                'location': coach.location,
+                'price': coach.price,
+                'rating': coach.rating,
+                'reviews': coach.reviews,
+                'availability': coach.availability,
+                'availability_days': coach.availability_days,
+                'connections': coach.connections,
+                'followers': coach.followers,
+                'following': coach.following,
+                'description': coach.description,
+            }
+            return JsonResponse(data)
+
+        elif request.method == 'POST':
+            try:
+                body = json.loads(request.body)
+                print("Received update data:", body)  # Debug print
+                
+                # Validate required fields
+                allowed_fields = ['name', 'phone', 'address', 'city', 'state', 'zip', 
+                                'country', 'domain', 'experience', 'location', 'price', 
+                                'availability', 'availability_days', 'description']
+                
+                update_data = {k: v for k, v in body.items() if k in allowed_fields}
+                
+                # Update only provided fields
+                for field, value in update_data.items():
+                    setattr(coach, field, value)
+                
+                coach.save()
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Profile updated successfully',
+                    'updated_fields': list(update_data.keys())
+                })
+                
+            except json.JSONDecodeError:
+                return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+            except Exception as e:
+                print(f"Profile update error: {str(e)}")  # Debug print
+                return JsonResponse({
+                    'error': 'Failed to update profile',
+                    'detail': str(e)
+                }, status=500)
+
+        else:
+            return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 
 @csrf_exempt
@@ -437,4 +438,4 @@ def follow_user(request):
 
 # @csrf_exempt
 # def chart(request):
-    
+

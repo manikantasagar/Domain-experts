@@ -126,7 +126,7 @@ export const OwnProfile = () => {
         return (
             <div className="ownprofile-container">
                 <div className="ownprofile-main">
-                    <div className="ownprofile-card">
+                    <div className="ownprzofile-card">
                         <div style={{ textAlign: 'center', padding: '40px' }}>
                             <div style={{ fontSize: '24px', color: '#667eea', marginBottom: '20px' }}>Loading...</div>
                             <div style={{ width: '40px', height: '40px', border: '4px solid #e2e8f0', borderTop: '4px solid #667eea', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto' }}></div>
@@ -224,10 +224,7 @@ export const OwnProfile = () => {
                                     src={data.image ? `${process.env.REACT_APP_SERVER_URL}${data.image}` : '/default-avatar.png'}
                                     alt="Profile"
                                     className="profile-image"
-                                    onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = '/default-avatar.png';
-                                    }}
+                                   
                                 />
                             )}
                         </div>
@@ -309,7 +306,7 @@ export const OwnProfile = () => {
                 </div>
                 
                 {/* Payment Statistics Section */}
-                <div style={{ marginTop: '2rem' }}>
+                {/* <div style={{ marginTop: '2rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                         <h3 style={{ color: '#333', margin: 0 }}>💰 Payment Statistics</h3>
                         <button 
@@ -327,7 +324,7 @@ export const OwnProfile = () => {
                         </button>
                     </div>
                     {showPaymentChart && data.id && <PaymentChart coachId={data.id} />}
-                </div>
+                </div> */}
             </div>
         </div>
     );
