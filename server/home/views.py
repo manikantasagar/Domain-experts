@@ -436,6 +436,43 @@ def follow_user(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 
+@csrf_exempt
+@require_http_methods(["POST"])
+def test_cloudinary_upload(request):
+    """Test view to verify Cloudinary storage is working"""
+    try:
+        if 'image' in request.FILES:
+            image = request.FILES['image']
+            # Save the image using the model
+            coach = Coaches.objects.first()
+            if coach:
+                coach.image = image
+                coach.save()
+                
+                # Check if the image URL is a Cloudinary URL
+                image_url = coach.image.url
+                if 'cloudinary.com' in image_url:
+                    return JsonResponse({
+                        'success': True,
+                        'message': 'File uploaded to Cloudinary successfully!',
+                        'image_url': image_url,
+                        'storage_type': 'Cloudinary'
+                    })
+                else:
+                    return JsonResponse({
+                        'success': False,
+                        'message': 'File uploaded but not to Cloudinary',
+                        'image_url': image_url,
+                        'storage_type': 'Local'
+                    })
+            else:
+                return JsonResponse({'error': 'No coaches found'}, status=400)
+        else:
+            return JsonResponse({'error': 'No image file provided'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
 # @csrf_exempt
 # def chart(request):
 

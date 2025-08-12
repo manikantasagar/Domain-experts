@@ -1,4 +1,5 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
 
 # Create your models here.
 class Coaches(models.Model):
@@ -20,7 +21,7 @@ class Coaches(models.Model):
     availability = models.BooleanField()
     availability_days = models.CharField(max_length=100)
 
-    image = models.ImageField(upload_to='coaches/')
+    image = CloudinaryField('image', folder='coaches/')
 
     connections=models.IntegerField()
     followers=models.IntegerField()

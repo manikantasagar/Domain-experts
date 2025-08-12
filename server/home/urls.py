@@ -19,6 +19,7 @@ urlpatterns = [
     path('payment-stats/', views.get_payment_stats, name='get_payment_stats'),
     path('connect-coach/', views.connect_coach, name='connect_coach'),
     path('follow-user/', views.follow_user, name='follow_user'),
+    path('test-cloudinary/', views.test_cloudinary_upload, name='test_cloudinary_upload'),
     path('admin/', admin.site.urls),
     # path('chart',views.chart,name='chart')
 ] 
