@@ -196,7 +196,7 @@ function Profile() {
         <div className="profile-header">
           <div className="profile-avatar-container">
             <img 
-              src={ `${process.env.REACT_APP_SERVER_URL}${coach.image}` 
+              src={ `${coach.image}` 
               } 
               alt={coach.name}
              

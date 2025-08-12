@@ -210,8 +210,9 @@ export const OwnProfile = () => {
                                         onChange={handleImageSelect}
                                         className="profile-image-input"
                                     />
+                                    {console.log(data.image)}
                                     <img 
-                                        src={imagePreview || (data.image ? `${process.env.REACT_APP_SERVER_URL}${data.image}` : '/default-avatar.png')}
+                                        src={`${data.image}` }
                                         alt="Profile"
                                         className="profile-image"
                                     />
@@ -221,7 +222,7 @@ export const OwnProfile = () => {
                                 </label>
                             ) : (
                                 <img 
-                                    src={data.image ? `${process.env.REACT_APP_SERVER_URL}${data.image}` : '/default-avatar.png'}
+                                    src={`${data.image}` }
                                     alt="Profile"
                                     className="profile-image"
                                    

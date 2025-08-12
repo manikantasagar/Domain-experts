@@ -76,7 +76,7 @@ function ProfBox({ coaches }) {
                     {console.log(`${process.env.REACT_APP_SERVER_URL}${coach.image}`)}
                     <img 
                       src={coach.image 
-                        ? `${process.env.REACT_APP_SERVER_URL}${coach.image}` 
+                        ? `${coach.image}` 
                         : '/default-avatar.png'
                       } 
                       alt={coach.name }
