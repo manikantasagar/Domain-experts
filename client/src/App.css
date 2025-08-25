@@ -255,6 +255,7 @@
 /* ===== PROFILE STYLES ===== */
 .profile-container {
   min-height: 100vh;
+  color:white;
   /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
   /* padding: 40px 20px; */
   display: flex;
@@ -266,7 +267,7 @@
 .profile-card {
   width: 100%;
   /* max-width: 900px; */
-  background:rgb(9 9 9 / 95%);
+  background:black;
 
   backdrop-filter: blur(10px);
   /* border-radius: 24px; */
